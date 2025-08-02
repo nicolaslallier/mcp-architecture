@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # Azure Blob Storage configuration
-BLOB_SAS_URL = "https://stdofsprdcae.blob.core.windows.net/mcpai?sp=r&st=2025-08-02T13:41:35Z&se=2026-08-02T21:56:35Z&spr=https&sv=2024-11-04&sr=c&sig=Ohabedd5Z4dtztPzCuaLEUjNV%2BTwMKlkOxzL1C9EXeI%3D"
+BLOB_SAS_URL = "https://stdofsprdcae.blob.core.windows.net/mcpai?sp=racwdl&st=2025-08-02T14:10:50Z&se=2026-08-02T22:25:50Z&spr=https&sv=2024-11-04&sr=c&sig=zEd8CjW0q34r%2Bcigml1L5eLy6kcLBN1xescpUdEyk7w%3D"
 CONTAINER_NAME = "mcpai"
 
 def main(req: func.HttpRequest) -> func.HttpResponse:

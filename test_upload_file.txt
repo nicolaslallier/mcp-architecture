@@ -1,0 +1,6 @@
+This is a test file for uploading to Azure Blob Storage.
+Created on: 2025-08-02
+Purpose: Testing the file upload endpoint
+
+Hello from the test file!
+This file will be uploaded using the /api/upload endpoint. 

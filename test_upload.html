@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test File Upload</title>
+</head>
+<body>
+    <h1>Test File Upload to Azure Function</h1>
+    <form action="https://maisonai-echngse9fkcve2hf.canadaeast-01.azurewebsites.net/api/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" required>
+        <br><br>
+        <input type="submit" value="Upload File">
+    </form>
+    
+    <div id="result"></div>
+    
+    <script>
+        document.querySelector('form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const resultDiv = document.getElementById('result');
+            
+            try {
+                const response = await fetch(this.action, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.text();
+                resultDiv.innerHTML = '<h3>Response:</h3><pre>' + result + '</pre>';
+                resultDiv.innerHTML += '<p>Status: ' + response.status + '</p>';
+            } catch (error) {
+                resultDiv.innerHTML = '<h3>Error:</h3><pre>' + error.message + '</pre>';
+            }
+        });
+    </script>
+</body>
+</html> 
