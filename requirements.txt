@@ -1,2 +1,3 @@
 azure-functions
-psutil 
+psutil
+azure-storage-blob 

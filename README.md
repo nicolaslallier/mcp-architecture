@@ -12,6 +12,9 @@ mcp-architecture/
 ├── HealthCheck/
 │   ├── __init__.py          # Health check function code
 │   └── function.json        # Health check function configuration
+├── FileUpload/
+│   ├── __init__.py          # File upload function code
+│   └── function.json        # File upload function configuration
 ├── host.json                # Azure Functions host configuration
 ├── local.settings.json      # Local development settings
 ├── requirements.txt         # Python dependencies
@@ -22,10 +25,12 @@ mcp-architecture/
 
 - **Hello World Endpoint**: `/api/hello` (GET/POST)
 - **Health Check Endpoint**: `/api/health` (GET)
+- **File Upload Endpoint**: `/api/upload` (POST)
 - **Response Format**: JSON with structured data
 - **CORS Support**: Configured for cross-origin requests
 - **Error Handling**: Proper error responses with status codes
 - **System Monitoring**: CPU, memory, and system information
+- **Azure Blob Storage Integration**: File upload to Azure Blob Storage
 
 ## Local Development
 
@@ -69,6 +74,9 @@ curl -X POST http://localhost:7071/api/hello
 
 # Health check endpoint
 curl http://localhost:7071/api/health
+
+# File upload endpoint
+curl -X POST -F "file=@/path/to/your/file.txt" http://localhost:7071/api/upload
 ```
 
 #### Using PowerShell:
@@ -79,6 +87,13 @@ Invoke-RestMethod -Uri "http://localhost:7071/api/hello" -Method Post
 
 # Health check endpoint
 Invoke-RestMethod -Uri "http://localhost:7071/api/health" -Method Get
+
+# File upload endpoint
+$filePath = "C:\path\to\your\file.txt"
+$form = @{
+    file = Get-Item -Path $filePath
+}
+Invoke-RestMethod -Uri "http://localhost:7071/api/upload" -Method Post -Form $form
 ```
 
 #### Expected Responses:
@@ -115,7 +130,24 @@ Invoke-RestMethod -Uri "http://localhost:7071/api/health" -Method Get
   },
   "endpoints": {
     "hello": "/api/hello",
-    "health": "/api/health"
+    "health": "/api/health",
+    "upload": "/api/upload"
+  }
+}
+```
+
+**File Upload Endpoint:**
+```json
+{
+  "status": "success",
+  "timestamp": "2024-01-15T10:30:45.123456",
+  "message": "File uploaded successfully",
+  "file_info": {
+    "original_filename": "example.txt",
+    "blob_filename": "70c0a153-4283-4862-934f-6fb116460d8d.txt",
+    "content_type": "text/plain",
+    "file_size": 27,
+    "blob_url": "https://stdofsprdcae.blob.core.windows.net/mcpai/70c0a153-4283-4862-934f-6fb116460d8d.txt"
   }
 }
 ```
@@ -219,6 +251,65 @@ Invoke-RestMethod -Uri "http://localhost:7071/api/health" -Method Get
   "error": "Error message",
   "timestamp": "2024-01-15T10:30:45.123456",
   "service": "Azure Function - Hello World API"
+}
+```
+
+### Endpoint: `/api/upload`
+
+**URL**: `https://<your-function-app>.azurewebsites.net/api/upload`
+
+**Methods**: POST
+
+**Authentication**: Anonymous
+
+**Content-Type**: `multipart/form-data`
+
+**Request Body**: Form data with a file field named "file"
+
+**Response Format**: JSON
+
+**Success Response (200)**:
+```json
+{
+  "status": "success",
+  "timestamp": "2024-01-15T10:30:45.123456",
+  "message": "File uploaded successfully",
+  "file_info": {
+    "original_filename": "example.txt",
+    "blob_filename": "70c0a153-4283-4862-934f-6fb116460d8d.txt",
+    "content_type": "text/plain",
+    "file_size": 27,
+    "blob_url": "https://stdofsprdcae.blob.core.windows.net/mcpai/70c0a153-4283-4862-934f-6fb116460d8d.txt"
+  }
+}
+```
+
+**Error Responses**:
+
+**No File (400)**:
+```json
+{
+  "error": "No file provided. Please include a file in the 'file' field.",
+  "timestamp": "2024-01-15T10:30:45.123456",
+  "status": "error"
+}
+```
+
+**Invalid Content-Type (400)**:
+```json
+{
+  "error": "Content-Type must be multipart/form-data",
+  "timestamp": "2024-01-15T10:30:45.123456",
+  "status": "error"
+}
+```
+
+**Upload Error (500)**:
+```json
+{
+  "error": "Failed to upload file to blob storage: Error details",
+  "timestamp": "2024-01-15T10:30:45.123456",
+  "status": "error"
 }
 ```
 
