@@ -32,7 +32,10 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             },
             "endpoints": {
                 "hello": "/api/hello",
-                "health": "/api/health"
+                "health": "/api/health",
+                "upload": "/api/upload",
+                "blobs": "/api/blobs",
+                "blob_test": "/api/blob-test"
             }
         }
         
