@@ -7,8 +7,11 @@ This project contains an Azure Function that provides a REST API endpoint return
 ```
 mcp-architecture/
 ├── HttpExample/
-│   ├── __init__.py          # Main function code
-│   └── function.json        # Function configuration
+│   ├── __init__.py          # Hello World function code
+│   └── function.json        # Hello World function configuration
+├── HealthCheck/
+│   ├── __init__.py          # Health check function code
+│   └── function.json        # Health check function configuration
 ├── host.json                # Azure Functions host configuration
 ├── local.settings.json      # Local development settings
 ├── requirements.txt         # Python dependencies
@@ -17,11 +20,12 @@ mcp-architecture/
 
 ## Features
 
-- **REST API Endpoint**: `/api/hello`
-- **HTTP Methods**: GET and POST
-- **Response Format**: JSON with message, timestamp, and method information
+- **Hello World Endpoint**: `/api/hello` (GET/POST)
+- **Health Check Endpoint**: `/api/health` (GET)
+- **Response Format**: JSON with structured data
 - **CORS Support**: Configured for cross-origin requests
 - **Error Handling**: Proper error responses with status codes
+- **System Monitoring**: CPU, memory, and system information
 
 ## Local Development
 
@@ -59,29 +63,60 @@ mcp-architecture/
 
 #### Using curl:
 ```bash
-# GET request
+# Hello World endpoint
 curl http://localhost:7071/api/hello
-
-# POST request
 curl -X POST http://localhost:7071/api/hello
+
+# Health check endpoint
+curl http://localhost:7071/api/health
 ```
 
 #### Using PowerShell:
 ```powershell
-# GET request
+# Hello World endpoint
 Invoke-RestMethod -Uri "http://localhost:7071/api/hello" -Method Get
-
-# POST request
 Invoke-RestMethod -Uri "http://localhost:7071/api/hello" -Method Post
+
+# Health check endpoint
+Invoke-RestMethod -Uri "http://localhost:7071/api/health" -Method Get
 ```
 
-#### Expected Response:
+#### Expected Responses:
+
+**Hello World Endpoint:**
 ```json
 {
   "message": "Hello, World!",
   "timestamp": "2024-01-15T10:30:45.123456",
   "method": "GET",
   "status": "success"
+}
+```
+
+**Health Check Endpoint:**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-15T10:30:45.123456",
+  "service": "Azure Function - Hello World API",
+  "version": "1.0.0",
+  "environment": "python",
+  "system": {
+    "platform": "Windows",
+    "platform_version": "10.0.26100",
+    "python_version": "3.12.6",
+    "architecture": "64bit"
+  },
+  "resources": {
+    "cpu_percent": 11.6,
+    "memory_percent": 62.2,
+    "memory_available": 6438768640,
+    "memory_total": 17024892928
+  },
+  "endpoints": {
+    "hello": "/api/hello",
+    "health": "/api/health"
+  }
 }
 ```
 
@@ -137,6 +172,53 @@ Invoke-RestMethod -Uri "http://localhost:7071/api/hello" -Method Post
   "error": "Error message",
   "timestamp": "2024-01-15T10:30:45.123456",
   "status": "error"
+}
+```
+
+### Endpoint: `/api/health`
+
+**URL**: `https://<your-function-app>.azurewebsites.net/api/health`
+
+**Methods**: GET
+
+**Authentication**: Anonymous
+
+**Response Format**: JSON
+
+**Success Response (200)**:
+```json
+{
+  "status": "healthy",
+  "timestamp": "2024-01-15T10:30:45.123456",
+  "service": "Azure Function - Hello World API",
+  "version": "1.0.0",
+  "environment": "python",
+  "system": {
+    "platform": "Windows",
+    "platform_version": "10.0.26100",
+    "python_version": "3.12.6",
+    "architecture": "64bit"
+  },
+  "resources": {
+    "cpu_percent": 11.6,
+    "memory_percent": 62.2,
+    "memory_available": 6438768640,
+    "memory_total": 17024892928
+  },
+  "endpoints": {
+    "hello": "/api/hello",
+    "health": "/api/health"
+  }
+}
+```
+
+**Error Response (503)**:
+```json
+{
+  "status": "unhealthy",
+  "error": "Error message",
+  "timestamp": "2024-01-15T10:30:45.123456",
+  "service": "Azure Function - Hello World API"
 }
 ```
 
